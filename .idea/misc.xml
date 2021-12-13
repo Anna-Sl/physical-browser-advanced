@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.18697916666666667" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable-v24/next_pressed.xml" value="0.14270833333333333" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/color_cursor.xml" value="0.18229166666666666" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/ic_launcher_background.xml" value="0.18697916666666667" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/next.xml" value="0.18697916666666667" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/next_button_drawable.xml" value="0.18697916666666667" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/next_pressed.xml" value="0.14270833333333333" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/refresh.xml" value="0.18229166666666666" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/refresh_pressed.xml" value="0.22777777777777777" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/search_button_drawable.xml" value="0.2703125" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/drawable/url_input.xml" value="0.18229166666666666" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/layout/activity_main_2.xml" value="0.16666666666666666" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/layout/browser_ui_button.xml" value="0.16666666666666666" />
+        <entry key="..\:/Workspace/Android/physical-browser-advanced/app/src/main/res/menu/menu_main.xml" value="0.17083333333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>

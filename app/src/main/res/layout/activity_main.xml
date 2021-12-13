@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:padding="4dp"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/refreshButton"
+            android:layout_width="@dimen/ui_button_size"
+            android:layout_height="@dimen/ui_button_size"
+            android:background="@drawable/refresh_button_drawable" />
+
+        <EditText
+            android:id="@+id/urlEditText"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:background="@drawable/url_input"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:hint="@string/urlEditTextHint"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="8dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:imeOptions="actionSend"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/searchButton"
+            android:layout_width="@dimen/ui_button_size"
+            android:layout_height="@dimen/ui_button_size"
+            android:background="@drawable/next_button_drawable"/>
+
+
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/activity_main_webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        android:layout_margin="8dp"
+        />
+
+</LinearLayout>
