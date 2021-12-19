@@ -1,35 +1,21 @@
 # physical-browser
 
+**Physical browser** представляет собой Android приложение-браузер, предоставляющий web-приложениям доступ к контексту смартфона.
 
-Реализовано тестовое приложение, имитирующее работу браузера. 
+В приложении реализованы поисковая строка, кнопки _Next_ и _Refresh_ и компонент _WebView_. Кнопка Next отображают страницу, введенную в поисковую строку. Кнопка Refresh обновляет текущую страницу.
 
-**Цель приложения** – показать идею создания браузера, позволяющего веб-странице с помощью _javascript_ кода взаимодействовать c физическим окружением Android устройства.
 
-**Задача приложения** – отобразить на HTML странице список доступных Wi-Fi сетей и сеть к которому подключено устройство. 
+К _WebView_ привязывается _androidInterface_ - объект класса _JavascriptInterfaceImpl_, через который web-приложения могут взаимодействовать с физическим окружением устройства. Javascript код web-приложения может вызывать функции androidInterface как напрямую, так и через предлагаемое API, предназначенное для облегчение web-разработки.
+Ссылка на physical-browser-api: [a link](https://github.com/Anna-Sl/physical-browser-api).
 
-Приложение содержит компонент _webView_. В компонент загружается тестовая HTML страница, содержащая _javascipt_ код. 
-В приложении реализован класс _JavaScriptInterface_. У компонента _WebView_ вызывается метод _addJavascriptInterface(…)_ ,
-позволяющий связать интерфейс класса _JavaScriptInterface_ с _javascipt_ кодом HTML страницы.
 
-`webView.addJavascriptInterface(new JavaScriptInterface(this, webView), "androidInterface");`
-	
-Теперь _javascript_ код страницы сможет вызывать методы объекта _JavaScriptInterface_.  
-Методы вызываются через обращение к объекту _androidInterface_. Выглядит в _javascript_ коде вот так:
+Скриншоты браузера:
 
-`var ssid = androidInterface.getWiFiSSID();`
+![screen](./app/src/main/res/drawable/google_screen_2.jpg){:height="50%" width="50%"} ![screen2](./app/src/main/res/drawable/google_screen.jpg){:height="50%" width="50%"}
 
-И наоборот, через _WebView_ можно вызвать _javascript_ методы. 
-Это сделано на примере получения доступных в данной точке Wi-Fi сетей. 
-Так как сканирование доступных Wi-Fi сетей – долгий процесс, требующий вызова Android намерения `SCAN_RESULTS_AVAILABLE_ACTION`,
-то необходимо чтобы JavaScriptInterface дождался ответа системы и передал результат _javascript_ коду. 
+При первом запуске приложение запрашивает "разрешение на доступ к данным о расположении устройства".
+**Важно!** Физическая функциональность работает только при одновременно включенном Wi-Fi и GPS.
 
-`webView.loadUrl("javascript:showAvailableWifis('" + ssids + "');")`
+Cайты, не использующие physical-browser-api, в Physical browser работают. Проверено на google.com, vk.com, youtube.com, wildberries.ru.
 
-В итоге получаем, что веб-ресурс и объект _JavaScriptInterface_ могут свободно обмениваться информацией. 
-
-В HTML коде созданы две кнопки: “Get current Wi-Fi name” и “Scan available Wi-fis”. 
-По нажатию первой можно получить название текущей Wi-Fi сети (название показывается ввиде объявления _Toast_), 
-по нажатию второй выводятся все доступные Wi-Fi сети.
-
-   
-
+Для демонстрации использования physical-browser-api создан сайт “Faculty CMC checker” (Ссылка: [a link](https://github.com/Anna-Sl/cmc-checker)). 

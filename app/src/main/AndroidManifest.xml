@@ -5,9 +5,9 @@
     <application
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/physical_browser_icon"
         android:label="Physical browser"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/physical_browser_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Browser">
         <activity
