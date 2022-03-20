@@ -22,3 +22,7 @@
 Cайты, не использующие _physical-browser-api_, в Physical browser работают. Проверено на google.com, vk.com, youtube.com, wildberries.ru.
 
 Для демонстрации использования _physical-browser-api_ создан сайт “Faculty CMC checker” (Ссылка: [https://github.com/Anna-Sl/cmc-checker](https://github.com/Anna-Sl/cmc-checker)). 
+
+
+Важное: в новой версии _Physical_ _browser_ вызывает в конце каждой загружаемой страницы javascript метод openedInPhysicalBrowser
+и передает ему данные по Wi-Fi и Bluetooth сетям.
