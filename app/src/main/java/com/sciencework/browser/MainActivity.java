@@ -16,9 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 public class MainActivity extends AppCompatActivity {
 
     private EditText editText;
+    private String initUrl;
     private String currentUrl;
     private ProgressDialog progDialog;
-    private PhysicalBrowserWebView webView;
+    private PbWebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +78,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEditText() {
+        initUrl = this.getResources().getString(R.string.helloPage);
         editText = findViewById(R.id.urlEditText);
-        editText.setText(R.string.helloPage);
-        currentUrl = getResources().getString(R.string.helloPage);
+        editText.setText(initUrl);
+        currentUrl = initUrl;
     }
 
     private void initProgDialog() {
@@ -87,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
         progDialog.setCancelable(false);
     }
 
+    // Should be called after initEditText&initProgDialog
     private void initWebView() {
-        webView = new PhysicalBrowserWebView(this, progDialog);
+        webView = new PbWebView(this, progDialog, editText.getText().toString());
     }
 
 }

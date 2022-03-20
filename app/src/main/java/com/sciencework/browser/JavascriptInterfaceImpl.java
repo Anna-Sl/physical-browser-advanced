@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
+import com.sciencework.browser.data.WifiData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class JavascriptInterfaceImpl {
 
     private void sendNetworksToWebView(final List<WifiData> result) {
         final String param = toGson(result);
-        final String javascriptCode = "PhysicalBrowserWifiChecker.initAvailableNetworks('"+param+"');";
+        final String javascriptCode = "PhysicalBrowserWifiChecker.networksAreScanned('"+param+"');";
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             webView.evaluateJavascript(javascriptCode, s -> {});
         } else {
