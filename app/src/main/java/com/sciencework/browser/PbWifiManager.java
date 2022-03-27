@@ -11,6 +11,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
 
 import com.google.gson.Gson;
@@ -26,18 +27,21 @@ public class PbWifiManager {
 
     private final WifiManager wifiManager;
     private final AtomicInteger concurrent = new AtomicInteger(0);
+    private final AppCompatActivity context;
 
-    public PbWifiManager(Context context, WebView webView, AtomicInteger onPageFinishedCount, BlockingQueue<Runnable> queue) {
+    public PbWifiManager(AppCompatActivity context, WebView webView, BlockingQueue<Runnable> queue) {
+        this.context = context;
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         context.registerReceiver(
                 receiver(
-                    (networkData) -> networksAreScannedCallback(networkData, webView, onPageFinishedCount, queue)
+                    (networkData) -> networksAreScannedCallback(networkData, webView, queue)
                 ),
                 new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         );
     }
 
-    public PbWifiManager(Context context, Consumer<NetworkData> networkDataConsumer) {
+    public PbWifiManager(AppCompatActivity context, Consumer<NetworkData> networkDataConsumer) {
+        this.context = context;
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         context.registerReceiver(receiver(networkDataConsumer), new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
@@ -76,20 +80,15 @@ public class PbWifiManager {
         return result;
     }
 
-    private void networksAreScannedCallback(NetworkData networkData, WebView webView,
-                                            AtomicInteger onPageFinishedCount, BlockingQueue<Runnable> queue) {
+    private void networksAreScannedCallback(NetworkData networkData, WebView webView, BlockingQueue<Runnable> queue) {
         Log.e("Networks are scanned", "registerReceiver");
         String networkDataStr = toGson(networkData);
-        Log.e("Networks are scanned", "onPageFinishedCount is decremented to " + (onPageFinishedCount.get() - 1));
-        if (onPageFinishedCount.getAndDecrement() > 0) {
-            Log.e("Networks are scanned", "onPageFinishedCount was > 0. Start calling openedInPhysicalBrowser with " + networkDataStr);
-            webView.evaluateJavascript("openedInPhysicalBrowser('" + networkDataStr + "');", null);
-        } else {
-            queue.add(() -> {
-                Log.e("Networks are scanned", "onPageFinishedCount was <= 0. Start calling openedInPhysicalBrowser with " + networkDataStr);
-                webView.evaluateJavascript("openedInPhysicalBrowser('" + networkDataStr + "');", null);
-            });
-        }
+        queue.add(() -> {
+            Log.e("Networks are scanned", "Start calling openedInPhysicalBrowser with " + networkDataStr);
+            context.runOnUiThread(() ->
+                webView.evaluateJavascript("openedInPhysicalBrowser('" + networkDataStr + "');", null)
+            );
+        });
     }
 
     private String toGson(Object obj) {

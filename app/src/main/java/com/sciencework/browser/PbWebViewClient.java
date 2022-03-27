@@ -2,27 +2,32 @@ package com.sciencework.browser;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.core.util.Consumer;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PbWebViewClient extends WebViewClient {
 
     private final ProgressDialog progDialog;
     private final Consumer<WebView> processorOnPageStarted;
-    private final AtomicInteger onPageFinishedCount;
     private final BlockingQueue<Runnable> queue;
 
-    public PbWebViewClient(ProgressDialog progDialog, Consumer<WebView> processorOnPageStarted, AtomicInteger onPageFinishedCount,
+    public PbWebViewClient(ProgressDialog progDialog, Consumer<WebView> processorOnPageStarted,
                            BlockingQueue<Runnable> queue) {
         this.progDialog = progDialog;
         this.processorOnPageStarted = processorOnPageStarted;
-        this.onPageFinishedCount = onPageFinishedCount;
         this.queue = queue;
     }
 
@@ -44,19 +49,9 @@ public class PbWebViewClient extends WebViewClient {
     public void onPageFinished(WebView view, final String url) {
         Log.e("PbWebViewClient", "page is finished. Url: " + url);
         progDialog.dismiss();
-        onPageFinishedCount.incrementAndGet();
-        Log.e("PbWebViewClient", "onPageFinishedCount is incremented to " + onPageFinishedCount.get());
         super.onPageFinished(view, url);
-        if (!queue.isEmpty()) {
-            try {
-                Log.e("PbWebViewClient", "queue is NOT empty");
-                queue.take().run();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.e("PbWebViewClient", "queue is empty");
-        }
+        PbLooper looper = new PbLooper(queue);
+        looper.start();
     }
 
 }

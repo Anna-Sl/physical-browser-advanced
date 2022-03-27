@@ -16,18 +16,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PbWebView {
 
-    private final Context context;
+    private final AppCompatActivity context;
     private final WebView webView;
     private final JavascriptInterfaceImpl androidInterface;
-    private final AtomicInteger onPageFinishedCount;
     private final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(15);
 
     public PbWebView(AppCompatActivity activity, ProgressDialog progDialog, String initUrl) {
         context = activity;
         webView = activity.findViewById(R.id.activity_main_webview);
         androidInterface = new JavascriptInterfaceImpl(activity, webView);
-        this.onPageFinishedCount = new AtomicInteger(0);
-        PbWebViewClient pbWebViewClient = new PbWebViewClient(progDialog, view -> addJavascriptInterface(), onPageFinishedCount, queue);
+        PbWebViewClient pbWebViewClient = new PbWebViewClient(progDialog, view -> addJavascriptInterface(), queue);
         webView.setWebViewClient(pbWebViewClient);
         setupSettings();
         loadInitPage(initUrl);
@@ -58,7 +56,7 @@ public class PbWebView {
 
     private void addJavascriptInterface() {
         webView.addJavascriptInterface(androidInterface, "androidInterface");
-        new PbWifiManager(context, webView, onPageFinishedCount, queue).startScan();
+        new PbWifiManager(context, webView, queue).startScan();
     }
 
 }
