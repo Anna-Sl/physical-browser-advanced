@@ -1,7 +1,6 @@
 package com.sciencework.browser;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -10,25 +9,20 @@ import android.webkit.WebView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+public class PbWebViewManager {
 
-public class PbWebView {
-
-    private final AppCompatActivity context;
+    private final AppCompatActivity activity;
     private final WebView webView;
     private final JavascriptInterfaceImpl androidInterface;
-    private final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(15);
 
-    public PbWebView(AppCompatActivity activity, ProgressDialog progDialog, String initUrl) {
-        context = activity;
+    public PbWebViewManager(AppCompatActivity activity) {
+        this.activity = activity;
         webView = activity.findViewById(R.id.activity_main_webview);
         androidInterface = new JavascriptInterfaceImpl(activity, webView);
-        PbWebViewClient pbWebViewClient = new PbWebViewClient(progDialog, view -> addJavascriptInterface(), queue);
-        webView.setWebViewClient(pbWebViewClient);
+
         setupSettings();
-        loadInitPage(initUrl);
+        webView.setWebViewClient(createPbWebViewClient());
+        loadInitPage();
     }
 
     public void update(String url) {
@@ -36,7 +30,23 @@ public class PbWebView {
         webView.clearCache(true);
         webView.loadUrl("about:blank");
         webView.loadUrl(url);
-        addJavascriptInterface();
+    }
+
+    private PbWebViewClient createPbWebViewClient() {
+        ProgressDialog progDialog = ProgressDialog.show(activity, "Loading","Please wait...", true);
+        progDialog.setCancelable(false);
+        PbWebViewClient pbWebViewClient = new PbWebViewClient (
+                () -> {
+                    webView.addJavascriptInterface(androidInterface, "androidInterface");
+                    new PbWifiTaskManager(activity, webView).startScan();
+                    progDialog.show();
+                },
+                () -> {
+                    progDialog.dismiss();
+                    new PbLooper().start();
+                }
+        );
+        return pbWebViewClient;
     }
 
     private void setupSettings() {
@@ -45,18 +55,12 @@ public class PbWebView {
         settings.setDomStorageEnabled(true);
     }
 
-    private void loadInitPage(String helloPage) {
+    private void loadInitPage() {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             Log.e("PbWebView", "loadInitPage");
-            webView.loadUrl(helloPage);
-            addJavascriptInterface();
+            webView.loadUrl(activity.getResources().getString(R.string.helloPage));
         }, 1);
-    }
-
-    private void addJavascriptInterface() {
-        webView.addJavascriptInterface(androidInterface, "androidInterface");
-        new PbWifiManager(context, webView, queue).startScan();
     }
 
 }

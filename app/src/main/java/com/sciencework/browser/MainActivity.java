@@ -1,7 +1,6 @@
 package com.sciencework.browser;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,10 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 public class MainActivity extends AppCompatActivity {
 
     private EditText editText;
-    private String initUrl;
     private String currentUrl;
-    private ProgressDialog progDialog;
-    private PbWebView webView;
+    private PbWebViewManager pbWebViewManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
         WebView.enableSlowWholeDocumentDraw();
         setContentView(R.layout.activity_main);
 
+        PbNetworkManager.getInstance().queue().clear();
+        pbWebViewManager = new PbWebViewManager(this);
         initSearchButton();
         initRefreshButton();
         initEditText();
-        initProgDialog();
-        initWebView();
     }
 
     @Override
@@ -47,22 +44,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        progDialog.dismiss();
-    }
-
     private void initSearchButton() {
         Button searchButton = findViewById(R.id.searchButton);
         searchButton.setOnClickListener(view -> {
             String typedUrl = editText.getText().toString();
-            progDialog.show();
             if(StringUtils.isNotEmpty(typedUrl)) {
-                webView.update(typedUrl);
+                pbWebViewManager.update(typedUrl);
                 currentUrl = typedUrl;
             } else {
-                webView.update(currentUrl);
+                pbWebViewManager.update(currentUrl);
                 editText.setText(currentUrl);
             }
         });
@@ -71,27 +61,16 @@ public class MainActivity extends AppCompatActivity {
     private void initRefreshButton() {
         Button refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setOnClickListener(view -> {
-            progDialog.show();
-            webView.update(currentUrl);
+            pbWebViewManager.update(currentUrl);
             editText.setText(currentUrl);
         });
     }
 
     private void initEditText() {
-        initUrl = this.getResources().getString(R.string.helloPage);
+        String initUrl = this.getResources().getString(R.string.helloPage);
         editText = findViewById(R.id.urlEditText);
         editText.setText(initUrl);
         currentUrl = initUrl;
-    }
-
-    private void initProgDialog() {
-        progDialog = ProgressDialog.show(this, "Loading","Please wait...", true);
-        progDialog.setCancelable(false);
-    }
-
-    // Should be called after initEditText&initProgDialog
-    private void initWebView() {
-        webView = new PbWebView(this, progDialog, editText.getText().toString());
     }
 
 }
