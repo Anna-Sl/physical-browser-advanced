@@ -23,6 +23,7 @@ public class PbWebViewClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        Log.e("THREAD", "PbWebViewClient.onPageStarted: " + Thread.currentThread());
         processorOnPageStarted.run();
         Log.e("PbWebViewClient", "page is started. Url: " + url);
         super.onPageStarted(view, url, favicon);
@@ -30,6 +31,7 @@ public class PbWebViewClient extends WebViewClient {
 
     @Override
     public void onPageFinished(WebView view, final String url) {
+        Log.e("THREAD", "PbWebViewClient.onPageFinished: " + Thread.currentThread());
         super.onPageFinished(view, url);
         Log.e("PbWebViewClient", "page is finished. Url: " + url);
         processorOnPageFinished.run();

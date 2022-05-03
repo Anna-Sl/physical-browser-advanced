@@ -1,17 +1,17 @@
-package com.sciencework.browser;
+package com.sciencework.browser.manager;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class PbNetworkManager {
+public class PbQueueManager {
 
-    private static final PbNetworkManager INSTANCE = new PbNetworkManager();
+    private static final PbQueueManager INSTANCE = new PbQueueManager();
 
     private final BlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(15);
 
-    private PbNetworkManager() {}
+    private PbQueueManager() {}
 
-    public static PbNetworkManager getInstance() {
+    public static PbQueueManager getInstance() {
         return(INSTANCE);
     }
 

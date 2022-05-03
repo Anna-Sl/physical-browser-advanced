@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.sciencework.browser.manager.PbQueueManager;
+
 import java.util.concurrent.TimeUnit;
 
 public class PbLooper extends Thread {
@@ -12,6 +14,7 @@ public class PbLooper extends Thread {
 
     @Override
     public void run() {
+        Log.e("THREAD", "PbLooper.run: " + Thread.currentThread());
         Looper.prepare();
         handler = new Handler();
         handler.post(this::tryToPollTask);
@@ -19,10 +22,11 @@ public class PbLooper extends Thread {
     }
 
     private void tryToPollTask() {
+        Log.e("THREAD", "PbLopper.tryToPollTask: " + Thread.currentThread());
         Log.e("PbWebViewClient", "try to get a task from blocking queue");
         Runnable polledTask = null;
         try {
-            polledTask = PbNetworkManager.getInstance().queue().poll(30, TimeUnit.SECONDS);
+            polledTask = PbQueueManager.getInstance().queue().poll(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

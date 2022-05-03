@@ -1,32 +1,34 @@
 package com.sciencework.browser.data;
 
+import java.util.Collection;
 import java.util.List;
 
-public class WifiData {
+public class BleData {
+
     private boolean isEnabled;
     private String error;
-    private List<WfApInfo> scanned;
+    private List<BtApInfo> scanned;
     private long timeMillis;
 
-    public WifiData(boolean isEnabled, List<WfApInfo> scanned, long timeMillis) {
+    public BleData(boolean isEnabled, List<BtApInfo> scanned, long timeMillis) {
         this.isEnabled = isEnabled;
         this.scanned = scanned;
         this.timeMillis = timeMillis;
     }
 
-    public WifiData(String error) {
+    public BleData(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public BleData(String error) {
         this.error = error;
     }
 
-    public WifiData(boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public List<BtApInfo> getScanned() {
+        return scanned;
     }
 
     public long getTimeMillis() {
         return timeMillis;
-    }
-
-    public List<WfApInfo> getScanned() {
-        return scanned;
     }
 }

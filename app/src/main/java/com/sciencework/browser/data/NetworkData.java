@@ -1,13 +1,11 @@
 package com.sciencework.browser.data;
 
-import java.util.List;
-
 public class NetworkData {
-    private final List<WifiData> wifiDataArray;
-    private final List<BluetoothData> bluetoothDataArray;
+    private final WifiData wifiData;
+    private final BleData bleData;
 
-    public NetworkData(List<WifiData> wifiDataArray, List<BluetoothData> bluetoothDataArray) {
-        this.wifiDataArray = wifiDataArray;
-        this.bluetoothDataArray = bluetoothDataArray;
+    public NetworkData(WifiData wifiData, BleData bleData) {
+        this.wifiData = wifiData;
+        this.bleData = bleData;
     }
 }

@@ -1,14 +1,19 @@
 package com.sciencework.browser;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.sciencework.browser.manager.PbQueueManager;
+import com.sciencework.browser.manager.PbWebViewManager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,10 +26,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("THREAD", "MainActivity.onCreate: " + Thread.currentThread());
         WebView.enableSlowWholeDocumentDraw();
         setContentView(R.layout.activity_main);
 
-        PbNetworkManager.getInstance().queue().clear();
+        PbQueueManager.getInstance().queue().clear();
         pbWebViewManager = new PbWebViewManager(this);
         initSearchButton();
         initRefreshButton();
@@ -42,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter.isDiscovering()) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        super.onDestroy();
     }
 
     private void initSearchButton() {
