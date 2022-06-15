@@ -5,12 +5,12 @@ import java.util.List;
 public class WifiData {
     private boolean isEnabled;
     private String error;
-    private List<WfApInfo> scanned;
+    private List<WfApInfo> points;
     private long timeMillis;
 
-    public WifiData(boolean isEnabled, List<WfApInfo> scanned, long timeMillis) {
+    public WifiData(boolean isEnabled, List<WfApInfo> points, long timeMillis) {
         this.isEnabled = isEnabled;
-        this.scanned = scanned;
+        this.points = points;
         this.timeMillis = timeMillis;
     }
 
@@ -26,7 +26,11 @@ public class WifiData {
         return timeMillis;
     }
 
-    public List<WfApInfo> getScanned() {
-        return scanned;
+    public List<WfApInfo> getPoints() {
+        return points;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }

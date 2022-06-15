@@ -3,36 +3,57 @@ package com.sciencework.browser.utils;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
 import com.google.gson.Gson;
-import com.sciencework.browser.data.PbProperties;
+import com.sciencework.browser.data.BleData;
+import com.sciencework.browser.data.BtApInfo;
+import com.sciencework.browser.data.PbOptions;
+import com.sciencework.browser.data.WfApInfo;
+import com.sciencework.browser.data.WifiData;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PbUtils {
 
-    public static String toGson(Object obj) {
+    public static String toJson(Object obj) {
         Gson gson = new Gson();
         return gson.toJson(obj);
     }
 
-    public static PbProperties fromGson(String properties) {
+    public static PbOptions fromJson(String options) {
         Gson gson = new Gson();
-        return gson.fromJson(properties, PbProperties.class);
+        return gson.fromJson(options, PbOptions.class);
+    }
+
+    public static String toJson(PbOptions options) {
+        Gson gson = new Gson();
+        return gson.toJson(options, PbOptions.class);
     }
 
     public static boolean checkForAccessFineLocation(Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
-    public static boolean isDataFresh(long timeMillis, long timeoutInSeconds) {
+    public static boolean isNeedToScan(long timeMillis, long timeoutInMillis) {
         long currentTimeMillis = System.currentTimeMillis();
-        long spentSeconds = (int) Math.ceil((double) (currentTimeMillis - timeMillis) / 1000);
-        Log.e("TIME IS SPENT", "for timeMillis " + timeMillis + " spent seconds: " + spentSeconds);
-        return (currentTimeMillis - timeMillis) < timeoutInSeconds * 1000;
+        return (currentTimeMillis - timeMillis) >= timeoutInMillis;
     }
+
+    public static WifiData sort(WifiData data) {
+        List<WfApInfo> copied = new ArrayList<>(data.getPoints());
+        Collections.sort(copied,Collections.reverseOrder());
+        return new WifiData(data.isEnabled(), copied, data.getTimeMillis());
+    }
+
+    public static BleData sort(BleData data) {
+        List<BtApInfo> copied = new ArrayList<>(data.getPoints());
+        Collections.sort(copied,Collections.reverseOrder());
+        return new BleData(data.isEnabled(), copied, data.getTimeMillis());
+    }
+
 
 }

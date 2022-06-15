@@ -1,6 +1,7 @@
 package com.sciencework.browser.manager;
 
-import static com.sciencework.browser.utils.PbUtils.toGson;
+import static com.sciencework.browser.utils.PbUtils.sort;
+import static com.sciencework.browser.utils.PbUtils.toJson;
 
 import android.util.Log;
 import android.webkit.WebView;
@@ -10,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.sciencework.browser.data.BleData;
 import com.sciencework.browser.data.NetworkData;
 import com.sciencework.browser.data.WifiData;
-
-import java.util.Collections;
 
 public class OnScannedManager {
 
@@ -54,16 +53,6 @@ public class OnScannedManager {
         callOnNetworkScannedInPhysicalBrowser(wifiData, null);
     }
 
-    private void sortIfNeed(WifiData wifiData) {
-        if (wifiNeedToSort) {
-            Log.e("SORT", "OnScannedManager.sortWifiIfNeed before: " + toGson(wifiData.getScanned()));
-            if (wifiData.getScanned() != null)
-                Collections.sort(wifiData.getScanned(), Collections.reverseOrder());
-            Log.e("SORT", "OnScannedManager.sortWifiIfNeed after: " + toGson(wifiData.getScanned()));
-            wifiNeedToSort = false;
-        }
-    }
-
     public void onScanned(BleData bleData) {
         Log.e("THREAD", "OnScannedManager.onBleScanned: " + Thread.currentThread());
         this.bleData = bleData;
@@ -77,37 +66,16 @@ public class OnScannedManager {
         callOnNetworkScannedInPhysicalBrowser(null, bleData);
     }
 
-    private void sortIfNeed(BleData bleData) {
-        if (bleNeedToSort) {
-            Log.e("SORT", "OnScannedManager.sortBleIfNeed before: " + toGson(bleData.getScanned()));
-            if (bleData.getScanned() != null)
-                Collections.sort(bleData.getScanned(),Collections.reverseOrder());
-            Log.e("SORT", "OnScannedManager.sortBleIfNeed after: " + toGson(bleData.getScanned()));
-            bleNeedToSort = false;
-        }
-    }
-
-    private void callOnNetworkScannedInPhysicalBrowser(WifiData wifiData, BleData bleData) {
-        final NetworkData data = new NetworkData(wifiData, bleData);
-        final String dataStr = toGson(data);
-        Log.e("Wifi or Ble scanned", "Start calling __onNetworkScannedInPhysicalBrowser__ with " + dataStr);
-        context.runOnUiThread(() -> {
-                    Log.e("THREAD", "OnScannedManager.evaluateJavascript " + Thread.currentThread());
-                    webView.evaluateJavascript("__onNetworkScannedInPhysicalBrowser__('" + dataStr + "');", null);
-                }
-        );
-    }
-
     private void callOnPageLoadedInPhysicalBrowser() {
         Log.e("THREAD", "OnScannedManager.onScanned: " + Thread.currentThread());
         final NetworkData data = new NetworkData(wifiData, bleData);
-        final String networkDataStr = toGson(data);
+        final String networkDataStr = toJson(data);
         PbQueueManager.getInstance().queue().add(() -> {
             Log.e("THREAD", "queue.add(): " + Thread.currentThread());
-            Log.e("Networks are scanned", "Start calling __onPageLoadedInPhysicalBrowser__ with " + networkDataStr);
+            Log.e("Networks are scanned", "Start calling pbOnPageLoaded with " + networkDataStr);
             context.runOnUiThread(() -> {
-                        Log.e("THREAD", "about to load __onPageLeadedInPhysicalBrowser: " + Thread.currentThread());
-                        webView.evaluateJavascript("__onPageLoadedInPhysicalBrowser__('" + networkDataStr + "');", null);
+                        Log.e("THREAD", "about to load pbOnPageLoaded: " + Thread.currentThread());
+                        webView.evaluateJavascript("pbOnPageLoaded('" + networkDataStr + "');", null);
                     }
             );
         });
@@ -118,6 +86,33 @@ public class OnScannedManager {
         wifiData = null;
         bleData = null;
         Log.e("NetworkScannedManager", "onScanned() is finished");
+    }
+
+    private void callOnNetworkScannedInPhysicalBrowser(WifiData wifiData, BleData bleData) {
+        final NetworkData data = new NetworkData(wifiData, bleData);
+        final String dataStr = toJson(data);
+        Log.e("Wifi or Ble scanned", "Start calling pbOnNetworkScanned with " + dataStr);
+        context.runOnUiThread(() -> {
+                    Log.e("THREAD", "OnScannedManager.evaluateJavascript " + Thread.currentThread());
+                    webView.evaluateJavascript("pbOnNetworkScanned('" + dataStr + "');", null);
+                }
+        );
+    }
+
+    private void sortIfNeed(WifiData wifiData) {
+        if (wifiNeedToSort) {
+            wifiData = sort(wifiData);
+            Log.e("SORT", "OnScannedManager.sortWifiIfNeed after: " + toJson(wifiData.getPoints()));
+            wifiNeedToSort = false;
+        }
+    }
+
+    private void sortIfNeed(BleData bleData) {
+        if (bleNeedToSort) {
+            bleData = sort(bleData);
+            Log.e("SORT", "OnScannedManager.sortBleIfNeed after: " + toJson(bleData.getPoints()));
+            bleNeedToSort = false;
+        }
     }
 
 }

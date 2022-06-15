@@ -20,22 +20,18 @@ public class PbWebViewManager {
     private final WebView webView;
     private final AndroidInterface androidInterface;
 
-    PbWifiManager wifiManager;
-    PbBleManager bleManager;
-    OnScannedManager onScannedManager;
-    OnStateChangedManager onStateChangedManager;
-    ScanningManager scanningManager;
+    private final ScanningManager scanningManager;
 
     public PbWebViewManager(AppCompatActivity activity) {
         this.activity = activity;
         webView = activity.findViewById(R.id.activity_main_webview);
 
-        onScannedManager = new OnScannedManager(activity, webView);
-        onStateChangedManager = new OnStateChangedManager(activity, webView);
-        wifiManager = new PbWifiManager(activity, onScannedManager, onStateChangedManager);
-        bleManager = new PbBleManager(activity, onScannedManager, onStateChangedManager);
+        OnScannedManager onScannedManager = new OnScannedManager(activity, webView);
+        OnStateChangedManager onStateChangedManager = new OnStateChangedManager(activity, webView);
+        PbWifiManager wifiManager = new PbWifiManager(activity, onScannedManager, onStateChangedManager);
+        PbBleManager bleManager = new PbBleManager(activity, onScannedManager, onStateChangedManager);
         scanningManager = new ScanningManager(onScannedManager, wifiManager, bleManager);
-        androidInterface = new AndroidInterface(scanningManager);
+        androidInterface = new AndroidInterface(activity, scanningManager);
 
         setupSettings();
         webView.setWebViewClient(createPbWebViewClient());

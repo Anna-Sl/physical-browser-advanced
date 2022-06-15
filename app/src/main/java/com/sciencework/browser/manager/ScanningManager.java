@@ -1,6 +1,8 @@
 package com.sciencework.browser.manager;
 
-import com.sciencework.browser.data.PbProperties;
+import com.sciencework.browser.data.BleData;
+import com.sciencework.browser.data.PbOptions;
+import com.sciencework.browser.data.WifiData;
 
 public class ScanningManager {
 
@@ -18,21 +20,32 @@ public class ScanningManager {
 
     public void startScan() {
         onScannedManager.activatePageLoadingMode();
-        wifiManager.startScan(false);
-        bleManager.startScan(false);
+        wifiManager.startScan();
+        bleManager.startScan();
     }
 
-    public void startWifiScan(PbProperties properties) {
-        if (properties.sorted) {
+    public void startWifiScan(PbOptions options) {
+        if (options.sorted) {
             onScannedManager.activateWifiNeedToSort();
         }
-        wifiManager.startScan(properties.forced);
+        long scanIfOlder = options.scanIfOlder == null ? PbBleManager.DEFAULT_SCAN_IF_OLDER : options.scanIfOlder;
+        wifiManager.startScan(scanIfOlder);
     }
 
-    public void startBleScan(PbProperties properties) {
-        if (properties.sorted) {
+    public void startBleScan(PbOptions options) {
+        if (options.sorted) {
             onScannedManager.activateBleNeedToSort();
         }
-        bleManager.startScan(properties.forced, properties.durationMillis);
+        long scanIfOlder = options.scanIfOlder == null ? PbBleManager.DEFAULT_SCAN_IF_OLDER : options.scanIfOlder;
+        long duration = options.duration == null ? PbBleManager.DEFAULT_SCAN_DURATION : options.duration;
+        bleManager.startScan(scanIfOlder, duration);
+    }
+
+    public BleData getCachedBleData() {
+        return bleManager.getBleData();
+    }
+
+    public WifiData getCachedWifiData() {
+        return wifiManager.getWifiData();
     }
 }

@@ -1,18 +1,17 @@
 package com.sciencework.browser.data;
 
-import java.util.Collection;
 import java.util.List;
 
 public class BleData {
 
     private boolean isEnabled;
     private String error;
-    private List<BtApInfo> scanned;
+    private List<BtApInfo> points;
     private long timeMillis;
 
-    public BleData(boolean isEnabled, List<BtApInfo> scanned, long timeMillis) {
+    public BleData(boolean isEnabled, List<BtApInfo> points, long timeMillis) {
         this.isEnabled = isEnabled;
-        this.scanned = scanned;
+        this.points = points;
         this.timeMillis = timeMillis;
     }
 
@@ -24,11 +23,15 @@ public class BleData {
         this.error = error;
     }
 
-    public List<BtApInfo> getScanned() {
-        return scanned;
+    public List<BtApInfo> getPoints() {
+        return points;
     }
 
     public long getTimeMillis() {
         return timeMillis;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }

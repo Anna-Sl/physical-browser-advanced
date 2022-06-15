@@ -1,6 +1,6 @@
 package com.sciencework.browser.manager;
 
-import static com.sciencework.browser.utils.PbUtils.toGson;
+import static com.sciencework.browser.utils.PbUtils.toJson;
 
 import android.util.Log;
 import android.webkit.WebView;
@@ -20,22 +20,22 @@ public class OnStateChangedManager {
     }
 
     public void onStateChanged(BleData bleData) {
-        Log.e("onStateChanged", "BLE: " + toGson(bleData));
+        Log.e("onStateChanged", "BLE: " + toJson(bleData));
         final NetworkData data = new NetworkData(null, bleData);
         onStateChanged(data);
     }
     public void onStateChanged(WifiData wifiData) {
-        Log.e("onStateChanged", "Wifi: " + toGson(wifiData));
+        Log.e("onStateChanged", "Wifi: " + toJson(wifiData));
         final NetworkData data = new NetworkData(wifiData, null);
         onStateChanged(data);
     }
 
     private void onStateChanged(NetworkData data) {
-        final String dataStr = toGson(data);
-        Log.e("onStateChanged", "Start calling __onAvailabilityChanged__ with " + dataStr);
+        final String dataStr = toJson(data);
+        Log.e("onStateChanged", "Start calling pbOnAvailabilityChanged with " + dataStr);
         context.runOnUiThread(() -> {
                     Log.e("THREAD", "OnStateChangedManager.evaluateJavascript " + Thread.currentThread());
-                    webView.evaluateJavascript("__onAvailabilityChanged__('" + dataStr + "');", null);
+                    webView.evaluateJavascript("pbOnAvailabilityChanged('" + dataStr + "');", null);
                 }
         );
     }

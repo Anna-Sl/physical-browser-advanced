@@ -1,50 +1,91 @@
 package com.sciencework.browser;
 
-import static com.sciencework.browser.utils.PbUtils.fromGson;
+import static com.sciencework.browser.utils.PbUtils.fromJson;
+import static com.sciencework.browser.utils.PbUtils.isNeedToScan;
+import static com.sciencework.browser.utils.PbUtils.sort;
+import static com.sciencework.browser.utils.PbUtils.toJson;
 
-import android.os.Handler;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import com.sciencework.browser.data.PbProperties;
-import com.sciencework.browser.manager.PbBleManager;
-import com.sciencework.browser.manager.PbWifiManager;
-import com.sciencework.browser.manager.ScanningManager;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONObject;
+import com.sciencework.browser.data.BleData;
+import com.sciencework.browser.data.PbOptions;
+import com.sciencework.browser.data.WifiData;
+import com.sciencework.browser.manager.ScanningManager;
 
 public class AndroidInterface {
 
+    private final AppCompatActivity context;
     private final ScanningManager scanningManager;
 
-    public AndroidInterface(ScanningManager scanningManager) {
+    public AndroidInterface(AppCompatActivity context, ScanningManager scanningManager) {
+        this.context = context;
         this.scanningManager = scanningManager;
     }
 
-//    @JavascriptInterface
-//    public void scanWifi(boolean sorted) {
-//        wifiManager.startScan(forsed=true);
-//    }
-//
-//    @JavascriptInterface
-//    public void scanBle(Filter filter, int timeoutInSeconds, boolean sorted) {
-//        bleManager.startScan(forsed=true);
-//    }
-
     @JavascriptInterface
-    public void scanWifi(String propertiesJson) {
-        Log.e("THREAD", "AndroidInterface.scanWifi" + Thread.currentThread());
-        Log.e("scanWifi.JSON", propertiesJson);
-        PbProperties properties = fromGson(propertiesJson);
-        scanningManager.startWifiScan(properties);
+    public String getCachedWifiData(String optionsStr) {
+        PbOptions options = fromJson(optionsStr);
+        Log.e("scan", "AndroidInterface.getCachedWifiData: options " + toJson(options));
+        WifiData cachedWifiData = scanningManager.getCachedWifiData();
+        if (options.sorted) {
+            cachedWifiData = sort(cachedWifiData);
+        }
+        Log.e("scan", "AndroidInterface.getCachedWifiData returns " + toJson(cachedWifiData));
+        return toJson(cachedWifiData);
     }
 
     @JavascriptInterface
-    public void scanBle(String propertiesJson) {
+    public String getCachedBleData(String optionsStr) {
+        PbOptions options = fromJson(optionsStr);
+        Log.e("scan", "AndroidInterface.getCachedBleData: options " + toJson(options));
+        BleData cachedBleData = scanningManager.getCachedBleData();
+        if (options.sorted) {
+            cachedBleData = sort(cachedBleData);
+        }
+        return toJson(cachedBleData);
+    }
+
+    @JavascriptInterface
+    public String scanWifi(String optionsStr) {
+        Log.e("THREAD", "AndroidInterface.scanWifi" + Thread.currentThread());
+        PbOptions options = fromJson(optionsStr);
+        Log.e("scan", "AndroidInterface.scanWifi: options " + toJson(options));
+
+        WifiData cachedWifiData = scanningManager.getCachedWifiData();
+        if (!isNeedToScan(cachedWifiData.getTimeMillis(), options.scanIfOlder)) {
+            if (options.sorted) {
+                cachedWifiData = sort(cachedWifiData);
+            }
+            return toJson(cachedWifiData);
+        }
+
+        context.runOnUiThread(() -> {
+            scanningManager.startWifiScan(options);
+        });
+        return null;
+    }
+
+    @JavascriptInterface
+    public String scanBle(String optionsStr) {
         Log.e("THREAD", "AndroidInterface.scanBle" + Thread.currentThread());
-        Log.e("scanBle.JSON", propertiesJson);
-        PbProperties properties = fromGson(propertiesJson);
-        scanningManager.startBleScan(properties);
+        PbOptions options = fromJson(optionsStr);
+        Log.e("scan", "AndroidInterface.scanBle: options " + toJson(options));
+
+        BleData cachedBleData = scanningManager.getCachedBleData();
+        if (!isNeedToScan(cachedBleData.getTimeMillis(), options.scanIfOlder)) {
+            if (options.sorted) {
+                cachedBleData = sort(cachedBleData);
+            }
+            return toJson(cachedBleData);
+        }
+
+        context.runOnUiThread(() -> {
+            scanningManager.startBleScan(options);
+        });
+        return null;
     }
 
 }
