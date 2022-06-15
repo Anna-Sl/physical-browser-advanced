@@ -75,7 +75,8 @@ public class AndroidInterface {
         Log.e("scan", "AndroidInterface.scanBle: options " + toJson(options));
 
         BleData cachedBleData = scanningManager.getCachedBleData();
-        if (!isNeedToScan(cachedBleData.getTimeMillis(), options.scanIfOlder)) {
+        if (options.scanIfOlder != null
+                && !isNeedToScan(cachedBleData.getTimeMillis(), options.scanIfOlder)) {
             if (options.sorted) {
                 cachedBleData = sort(cachedBleData);
             }
